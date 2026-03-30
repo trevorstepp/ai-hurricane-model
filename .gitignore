@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# ignore hurdat2.txt
+hurdat2.txt
