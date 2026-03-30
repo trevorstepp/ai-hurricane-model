@@ -9,5 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-# ignore hurdat2.txt
+# ignore hurdat2.txt and .csv from parsing
 hurdat2.txt
+parsed_hurdat2.csv
