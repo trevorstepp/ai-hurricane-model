@@ -9,6 +9,7 @@ MISSING_WIND = -99
 def convert_lat_lon(value: str) -> float:
     """
     Convert latitude and longitude (number and direction) to only a number.
+
     Example: `28.0N` becomes `28.0` and `91.8W` becomes `-91.8`.
 
     Parameters
@@ -29,9 +30,12 @@ def convert_lat_lon(value: str) -> float:
         num = -num
     return num
 
-def parse_hurdat2(file_path: str, csv_name: str) -> None:
+def parse_hurdat2(file_path: str, csv_name: str) -> pd.DataFrame:
+    """
+    """
     rows = []
     current_storm_id = None
+    error_count = 0
 
     # read each line, only keeping those with content
     with open(file_path, "r") as f:
@@ -51,6 +55,9 @@ def parse_hurdat2(file_path: str, csv_name: str) -> None:
             # data line
             try:
                 if len(content) < 8:
+                    continue
+
+                if current_storm_id is None:
                     continue
 
                 date_str = content[0]
@@ -87,8 +94,11 @@ def parse_hurdat2(file_path: str, csv_name: str) -> None:
                 })
 
             except Exception as e:
+                error_count += 1
                 print(f"Error: {e} | Line: {line}")
                 continue
+    
+    print(f"Finished parsing with {error_count} errors")
     
     df = pd.DataFrame(rows)
     # should already be sorted, but sort to be safe
@@ -97,13 +107,6 @@ def parse_hurdat2(file_path: str, csv_name: str) -> None:
     # lat/lon sanity check
     assert df["lat"].between(-90, 90).all()
     assert df["lon"].between(-180, 180).all()
+    
     df.to_csv(csv_name, index=False)
-
-if __name__ == "__main__":
-    base_dir = Path(__file__).resolve().parent.parent
-    data_dir = base_dir / "data"
-
-    input_path = data_dir / "hurdat2.txt"
-    output_path = data_dir / "parsed_hurdat2.csv"
-
-    parse_hurdat2(input_path, output_path)
+    return df
