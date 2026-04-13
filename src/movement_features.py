@@ -8,12 +8,16 @@ def add_movement_features(original_df: pd.DataFrame, csv_name: str) -> pd.DataFr
 
     Parameters
     ----
-    original_df : pd.DataFrame
-        DataFrame containing storm track data, including `storm_id`, `lat`, and `lon`.
+    original_df : DataFrame
+        The DataFrame containing storm track data, including `storm_id`, `lat`, and `lon`.
+    
+    csv_name : str
+        The file path where the resulting DataFrame with movement features will be saved
+        as a CSV file.
 
     Returns
     ----
-    pd.DataFrame
+    df : DataFrame
         A new DataFrame with added `dlat` and `dlon` columns, where each row represents
         the change in position from the previous timestep within the same storm.
     """
