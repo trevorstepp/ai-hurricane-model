@@ -8,17 +8,18 @@ def build_sequences(df: pd.DataFrame, seq_len: int = 6) -> tuple[npt.NDArray, np
     """
     Build LSTM-ready sequences for hurricane movement prediction.
 
-    Each sample:
-        X_seq = past `seq_len` timesteps.
-        y_seq = next timestep movement (`dlat`, `dlon`)
+    Each sample consists of:
+        X_seq: past `seq_len` timesteps of features
+        y_seq: next timestep movement (dlat, dlon)
 
     Parameters
     ----
     df : DataFrame
-        A DataFrame containing
+        The DataFrame containing hurricane track data with required columns:
+        [`storm_id`, `datetime`, `wind`, `pressure`, `dlat`, `dlon`]
     
-    seq_len : int
-        The
+    seq_len : int, default=6
+        The number of past timesteps used to predict the next step.
 
     Returns
     ----
@@ -31,6 +32,8 @@ def build_sequences(df: pd.DataFrame, seq_len: int = 6) -> tuple[npt.NDArray, np
     # create sequences of length 'seq_len' to predict the next movement
     # discard 'lat' and 'lon' since we have 'dlat' and 'dlon'
     for storm_id, group in df.groupby("storm_id"):
+        # re-sort by datetime just in case
+        group = group.sort_values("datetime")
         vals = group[FEATURES].values
 
         for i in range(len(vals) - seq_len - 1):
