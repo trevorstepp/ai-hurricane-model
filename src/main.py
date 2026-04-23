@@ -1,6 +1,7 @@
 from parse_hurdat2 import parse_hurdat2
 from movement_features import add_movement_features
 from sequences import build_sequences
+from split_and_scale import split_and_scale_data
 
 from pathlib import Path
 
@@ -17,12 +18,11 @@ def main():
     df = parse_hurdat2(hurdat2_path, parsed_hurdat2_csv)
     df = add_movement_features(df, movement_features_csv)
 
-    X, y = build_sequences(df)
+    X, y = build_sequences(df)  # (samples, time_steps, features)
+    print(X.shape)
+    print(y.shape)
 
-    # split data and normalize
-    split_idx = int(len(X) * 0.8)
-    X_train, X_test = X[:split_idx], X[split_idx:]
-    y_train, y_test = y[:split_idx], y[split_idx:]
+    X_train, X_test, y_train, y_test, scaler_X, scaler_y = split_and_scale_data(X, y)
 
 if __name__ == "__main__":
     main()
