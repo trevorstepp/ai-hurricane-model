@@ -1,5 +1,4 @@
-from parse_hurdat2 import parse_hurdat2
-from movement_features import add_movement_features
+from data_processing import parse_hurdat2, add_movement_features
 from sequences import build_sequences
 from split_and_scale import split_and_scale_data
 from model import HurricaneLSTM
@@ -11,7 +10,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 
-def main():
+def training_loop() -> None:
+    pass
+
+def main() -> None:
     """
     """
     hurdat2_path = DATA_DIR / "hurdat2.txt"
@@ -49,7 +51,7 @@ def main():
     # sanity check
     print("X_train: ", X_train.shape)
     print("y_train: ", y_train.shape)
-    
+
     model = HurricaneLSTM(
         input_dim=X_train.shape[-1],
         hidden_dim=64,
