@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import numpy as np
-import matplotlib.pyplot as plt
 
 class HurricaneLSTM(nn.Module):
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim):
@@ -27,6 +25,3 @@ class HurricaneLSTM(nn.Module):
         last_timestep = lstm_out[:, -1, :]
         out = self.fc(last_timestep)
         return out
-    
-    def training_loop(self) -> None:
-        pass
