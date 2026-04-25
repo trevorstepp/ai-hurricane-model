@@ -1,7 +1,7 @@
 from data_processing import parse_hurdat2, add_movement_features
 from sequences import build_sequences
 from split_and_scale import split_and_scale_data
-from utils import plot_loss
+from utils import plot_loss, load_or_build
 from model import HurricaneLSTM
 
 import torch
@@ -88,17 +88,17 @@ def main() -> None:
     parsed_hurdat2_csv = DATA_DIR / "parsed_hurdat2.csv"
     movement_features_csv = DATA_DIR / "movement_added.csv"
 
-    if parsed_hurdat2_csv.exists():
-        df = pd.read_csv(parsed_hurdat2_csv, parse_dates=["datetime"])
-    else:
-        df = parse_hurdat2(hurdat2_path, parsed_hurdat2_csv)
+    hurdat2_df = load_or_build(
+        parsed_hurdat2_csv,
+        lambda: parse_hurdat2(hurdat2_path, parsed_hurdat2_csv)
+    )
     
-    if movement_features_csv.exists():
-        df = pd.read_csv(movement_features_csv, parse_dates=["datetime"])
-    else:
-        df = add_movement_features(df, movement_features_csv)
+    movement_df = load_or_build(
+        movement_features_csv,
+        lambda: add_movement_features(hurdat2_df, movement_features_csv)
+    )
 
-    X, y = build_sequences(df)  # X: (samples, time_steps, features)
+    X, y = build_sequences(movement_df)  # X: (samples, time_steps, features)
                                 # y: (samples, 2)
 
     X_train, X_test, y_train, y_test, scaler_X, scaler_y = split_and_scale_data(X, y)
@@ -120,10 +120,6 @@ def main() -> None:
         batch_size=64,
         shuffle=False
     )
-
-    # sanity check
-    print("X_train: ", X_train.shape)
-    print("y_train: ", y_train.shape)
 
     model = HurricaneLSTM(
         input_dim=X_train.shape[-1],
