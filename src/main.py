@@ -92,14 +92,14 @@ def main() -> None:
         parsed_hurdat2_csv,
         lambda: parse_hurdat2(hurdat2_path, parsed_hurdat2_csv)
     )
-    
+
     movement_df = load_or_build(
         movement_features_csv,
         lambda: add_movement_features(hurdat2_df, movement_features_csv)
     )
 
     X, y = build_sequences(movement_df)  # X: (samples, time_steps, features)
-                                # y: (samples, 2)
+                                         # y: (samples, 2)
 
     X_train, X_test, y_train, y_test, scaler_X, scaler_y = split_and_scale_data(X, y)
 

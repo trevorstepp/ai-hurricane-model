@@ -36,3 +36,25 @@ def load_or_build(path: Path, build_fn) -> pd.DataFrame:
         return pd.read_csv(path, parse_dates=["datetime"])
     else:
         return build_fn()
+    
+def apply_movement(prev_lat: float, prev_lon: float, dlat: float, dlon: float) -> tuple[float, float]:
+    """
+    Convert predicted movement (dlat, dlon) into a new geographic position.
+
+    Parameters
+    ----
+    prev_lat : float
+        Previous latitude.
+    prev_lon : float
+        Previous longitude.
+    dlat : float
+        Predicted change in latitude.
+    dlon : float
+        Predicted change in longitude.
+
+    Returns 
+    ----
+    tuple[float, float]
+        New latitude and longitude after applying predicted movement.
+    """
+    return prev_lat + dlat, prev_lon + dlon
