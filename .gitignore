@@ -6,9 +6,10 @@ dist/
 wheels/
 *.egg-info
 
-# Virtual environments
+# virtual environments
 .venv
 
-# ignore hurdat2.txt and CSV
+# ignore hurdat2.txt, CSV, .pt models
 hurdat2.txt
 *.csv
+*.pt
