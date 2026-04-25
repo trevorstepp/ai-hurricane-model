@@ -1,6 +1,7 @@
 from data_processing import parse_hurdat2, add_movement_features
 from sequences import build_sequences
 from split_and_scale import split_and_scale_data
+from utils import plot_loss
 from model import HurricaneLSTM
 
 import torch
@@ -9,6 +10,7 @@ from torch.utils.data import TensorDataset, DataLoader
 from pathlib import Path
 from datetime import datetime
 import numpy as np
+import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -86,13 +88,18 @@ def main() -> None:
     parsed_hurdat2_csv = DATA_DIR / "parsed_hurdat2.csv"
     movement_features_csv = DATA_DIR / "movement_added.csv"
 
-    df = parse_hurdat2(hurdat2_path, parsed_hurdat2_csv)
-    df = add_movement_features(df, movement_features_csv)
+    if parsed_hurdat2_csv.exists():
+        df = pd.read_csv(parsed_hurdat2_csv, parse_dates=["datetime"])
+    else:
+        df = parse_hurdat2(hurdat2_path, parsed_hurdat2_csv)
+    
+    if movement_features_csv.exists():
+        df = pd.read_csv(movement_features_csv, parse_dates=["datetime"])
+    else:
+        df = add_movement_features(df, movement_features_csv)
 
     X, y = build_sequences(df)  # X: (samples, time_steps, features)
                                 # y: (samples, 2)
-    print(X.shape)
-    print(y.shape)
 
     X_train, X_test, y_train, y_test, scaler_X, scaler_y = split_and_scale_data(X, y)
 
@@ -126,6 +133,7 @@ def main() -> None:
     )
 
     train_losses, test_losses = training_loop(model, train_loader, test_loader)
+    plot_loss(train_losses, test_losses)
 
 if __name__ == "__main__":
     main()
