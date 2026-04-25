@@ -137,8 +137,8 @@ def add_movement_features(original_df: pd.DataFrame, csv_name: str) -> pd.DataFr
     df["dlat"] = df.groupby("storm_id")["lat"].diff()
     df["dlon"] = df.groupby("storm_id")["lon"].diff()
 
-    # drop any row with missing dlat and dlon (first row)
-    df = df.dropna(subset=["dlat", "dlon"]).reset_index(drop=True)
+    # drop any row with missing values
+    df = df.dropna(subset=["dlat", "dlon", "wind", "pressure"]).reset_index(drop=True)
     #df = df.dropna().reset_index(drop=True)
     df.to_csv(csv_name, index=False)
     return df
