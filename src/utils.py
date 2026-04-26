@@ -5,7 +5,7 @@ import torch
 from pathlib import Path
 from sklearn.preprocessing import StandardScaler
 
-from model import HurricaneLSTM
+from src.model import HurricaneLSTM
 
 def plot_loss(train_loss: list[float], test_loss: list[float]) -> None:
     """
