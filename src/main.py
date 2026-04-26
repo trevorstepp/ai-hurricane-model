@@ -121,16 +121,27 @@ def main() -> None:
         shuffle=False
     )
 
+    input_dim = X_train.shape[-1]
+    hidden_dim = 64
+    layer_dim = 2
+    output_dim = y_train.shape[-1]
     model = HurricaneLSTM(
-        input_dim=X_train.shape[-1],
-        hidden_dim=64,
-        layer_dim=2,
-        output_dim=y_train.shape[-1]
+        input_dim=input_dim,
+        hidden_dim=hidden_dim,
+        layer_dim=layer_dim,
+        output_dim=output_dim
     )
 
     train_losses, test_losses, model_dict = training_loop(model, train_loader, test_loader)
+
     save_path = MODELS_DIR / "best_model.pt"
-    save_model(model_dict, scaler_X, scaler_y, save_path)
+    model_params = {
+        "input_dim": input_dim,
+        "hidden_dim": hidden_dim,
+        "layer_dim": layer_dim,
+        "output_dim": output_dim
+    }
+    save_model(model_dict, scaler_X, scaler_y, model_params, save_path)
     plot_loss(train_losses, test_losses)
 
 if __name__ == "__main__":

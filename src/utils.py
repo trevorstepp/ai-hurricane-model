@@ -1,8 +1,11 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import torch.nn as nn
 import torch
 from pathlib import Path
 from sklearn.preprocessing import StandardScaler
+
+from model import HurricaneLSTM
 
 def plot_loss(train_loss: list[float], test_loss: list[float]) -> None:
     """
@@ -62,7 +65,7 @@ def apply_movement(prev_lat: float, prev_lon: float, dlat: float, dlon: float) -
     return prev_lat + dlat, prev_lon + dlon
 
 def save_model(state_dict: dict, scaler_X: StandardScaler, scaler_y: StandardScaler,
-               path: Path) -> None:
+               model_params: dict, path: Path) -> None:
     """
     Save trained model and associated scalers.
 
@@ -74,11 +77,38 @@ def save_model(state_dict: dict, scaler_X: StandardScaler, scaler_y: StandardSca
         Fitted scaler used to standardize input features.
     scaler_y : StandardScaler
         Fitted scaler used to standardize target values.
+    model_params : dict
+        The .
     path : Path
-        File path where the model will be saved.
+        File path to where the model will be saved.
     """
     torch.save({
         "model_state_dict": state_dict,
         "scaler_X": scaler_X,
-        "scaler_y": scaler_y
+        "scaler_y": scaler_y,
+        "model_params": model_params
     }, path)
+
+def load_model(model_class: type[nn.Module], path: Path) -> tuple[nn.Module, StandardScaler, StandardScaler]:
+    """
+    Retrieve the trained model and associated scalers.
+
+    Parameters
+    ----
+    model_class : type[nn.Module]
+        The model class used to reconstruct the model.
+    path : Path
+        File path to where the model is saved.
+    
+    Returns
+    ----
+    tuple[nn.Module, StandardScaler, StandardScaler]
+        The reconstructed model and the scalers used to standardize input and target values.
+    """
+    load = torch.load(path, weights_only=False)
+
+    params = load["model_params"]
+    model = model_class(**params)
+    model.load_state_dict(load["model_state_dict"])
+
+    return model, load["scaler_X"], load["scaler_y"]
