@@ -78,7 +78,8 @@ def save_model(state_dict: dict, scaler_X: StandardScaler, scaler_y: StandardSca
     scaler_y : StandardScaler
         Fitted scaler used to standardize target values.
     model_params : dict
-        The .
+        Dictionary of model initialization parameters used to reconstruct the model
+        architecture when loading in the model.
     path : Path
         File path to where the model will be saved.
     """
