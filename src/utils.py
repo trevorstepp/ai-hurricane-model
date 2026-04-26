@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import torch
 from pathlib import Path
+from sklearn.preprocessing import StandardScaler
 
 def plot_loss(train_loss: list[float], test_loss: list[float]) -> None:
     """
@@ -58,3 +60,25 @@ def apply_movement(prev_lat: float, prev_lon: float, dlat: float, dlon: float) -
         New latitude and longitude after applying predicted movement.
     """
     return prev_lat + dlat, prev_lon + dlon
+
+def save_model(state_dict: dict, scaler_X: StandardScaler, scaler_y: StandardScaler,
+               path: Path) -> None:
+    """
+    Save trained model and associated scalers.
+
+    Parameters
+    ----
+    state_dict : dict
+        State dictionary containing the trained model weights.
+    scaler_X : StandardScaler
+        Fitted scaler used to standardize input features.
+    scaler_y : StandardScaler
+        Fitted scaler used to standardize target values.
+    path : Path
+        File path where the model will be saved.
+    """
+    torch.save({
+        "model_state_dict": state_dict,
+        "scaler_X": scaler_X,
+        "scaler_y": scaler_y
+    }, path)

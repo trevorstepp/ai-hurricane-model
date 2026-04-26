@@ -1,7 +1,7 @@
 from data_processing import parse_hurdat2, add_movement_features
 from sequences import build_sequences
 from split_and_scale import split_and_scale_data
-from utils import plot_loss, load_or_build
+from utils import plot_loss, load_or_build, save_model
 from model import HurricaneLSTM
 
 import torch
@@ -20,7 +20,7 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 def training_loop(model: nn.Module, train_loader: DataLoader, test_loader: DataLoader,
-                  epochs: int = 10, lr: float = 0.001) -> tuple[list[float], list[float]]:
+                  epochs: int = 10, lr: float = 0.001) -> tuple[list[float], list[float], dict]:
     """
     Train the HurricaneLSTM model using training and test data loaders.
 
@@ -29,8 +29,8 @@ def training_loop(model: nn.Module, train_loader: DataLoader, test_loader: DataL
 
     Returns
     ----
-    tuple[list[float], list[float]]
-        Training and test loss per epoch.
+    tuple[list[float], list[float], dict]
+        Training and test loss per epoch and model state dictionary.
     """
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -69,17 +69,17 @@ def training_loop(model: nn.Module, train_loader: DataLoader, test_loader: DataL
         test_loss /= len(test_loader)
         print(f"Epoch {epoch + 1}: Train = {train_loss:.4f}, Test = {test_loss:.4f}")
 
-        # if we have a new best loss, save the model
+        # if we have a new best loss, keep that model stored
+        best_state = None
+
         if test_loss < best_loss:
             best_loss = test_loss
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            path = MODELS_DIR / "model_{}_{}.pt".format(timestamp, epoch)
-            torch.save(model.state_dict(), path)
+            best_state = model.state_dict()
 
         train_losses.append(train_loss)
         test_losses.append(test_loss)
     
-    return train_losses, test_losses
+    return train_losses, test_losses, best_state
 
 def main() -> None:
     """
@@ -128,7 +128,9 @@ def main() -> None:
         output_dim=y_train.shape[-1]
     )
 
-    train_losses, test_losses = training_loop(model, train_loader, test_loader)
+    train_losses, test_losses, model_dict = training_loop(model, train_loader, test_loader)
+    save_path = MODELS_DIR / "best_model.pt"
+    save_model(model_dict, scaler_X, scaler_y, save_path)
     plot_loss(train_losses, test_losses)
 
 if __name__ == "__main__":
