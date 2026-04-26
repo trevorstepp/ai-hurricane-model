@@ -9,7 +9,5 @@ wheels/
 # virtual environments
 .venv
 
-# ignore hurdat2.txt, CSV, .pt models
-hurdat2.txt
-*.csv
+# ignore .pt models
 *.pt
