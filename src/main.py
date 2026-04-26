@@ -1,4 +1,5 @@
-from data_processing import parse_hurdat2, add_movement_features
+from data_processing.parse_hurdat2 import parse_hurdat2
+from data_processing.movement_features import add_movement_features
 from sequences import build_sequences
 from split_and_scale import split_and_scale_data
 from utils import plot_loss, load_or_build, save_model
