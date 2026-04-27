@@ -135,7 +135,8 @@ def main() -> None:
 
     train_losses, test_losses, model_dict = training_loop(model, train_loader, test_loader)
 
-    save_path = MODELS_DIR / "best_model.pt"
+    timestamp = datetime.now().strftime("%Y%m%d_%H:%M:%S")
+    save_path = MODELS_DIR / f"best_model_{timestamp}.pt"
     model_params = {
         "input_dim": input_dim,
         "hidden_dim": hidden_dim,
