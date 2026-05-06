@@ -27,17 +27,17 @@ def split_and_scale_data(X: npt.NDArray, y: npt.NDArray) -> TrainTestData:
     A named tuple with the following attributes:
 
     X_train : ndarray
-        Scaled input sequence for training the model.
+        Scaled input sequence for training, shape (n_train, time_steps, num_features).
     X_test : ndarray
-        Scaled input sequence for testing the model.
+        Scaled input sequence for testing, shape (n_test, time_steps, num_features).
     y_train : ndarray
-        Scaled target values for training the model.
+        Scaled target values for training, shape (n_train, 2).
     y_test : ndarray
-        Scaled target values for testing the model.
+        Scaled target values for testing, shape (n_test, 2).
     scaler_X : StandardScaler
-        Scaler for X_train and X_test datasets.
+        Fitted scaler used for input features.
     scaler_y : StandardScaler
-        Scaler for y_train and y_test datasets.
+        Fitted scaler used for target values.
     """
     # split data and normalize
     num_features = X.shape[-1]
