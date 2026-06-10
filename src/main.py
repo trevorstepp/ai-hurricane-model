@@ -1,5 +1,5 @@
-from src.data_processing.parse_hurdat2 import parse_hurdat2
-from src.data_processing.movement_features import add_movement_features
+from src.data_processing.hurdat2.parse_hurdat2 import parse_hurdat2
+from src.data_processing.hurdat2.movement_features import add_movement_features
 from src.sequences import build_sequences
 from src.split_and_scale import split_and_scale_data
 from src.utils import plot_loss, load_or_build, save_model
@@ -123,7 +123,7 @@ def main() -> None:
     )
 
     input_dim = X_train.shape[-1]
-    hidden_dim = 64
+    hidden_dim = 32
     layer_dim = 2
     output_dim = y_train.shape[-1]
     model = HurricaneLSTM(

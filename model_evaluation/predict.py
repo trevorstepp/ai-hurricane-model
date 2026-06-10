@@ -45,3 +45,6 @@ def predict_one_step(
     
     pred_unscaled = scaler_y.inverse_transform(pred)
     return pred_unscaled[0]
+
+def predict_storm() -> None:
+    pass
