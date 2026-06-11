@@ -13,12 +13,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-MODELS_DIR = BASE_DIR / "models"
-
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-MODELS_DIR.mkdir(parents=True, exist_ok=True)
+from src.constants import MODELS_DIR, HURDAT2_DIR
 
 def training_loop(model: nn.Module, train_loader: DataLoader, test_loader: DataLoader,
                   epochs: int = 10, lr: float = 0.001) -> tuple[list[float], list[float], dict]:
@@ -85,9 +80,9 @@ def training_loop(model: nn.Module, train_loader: DataLoader, test_loader: DataL
 def main() -> None:
     """
     """
-    hurdat2_path = DATA_DIR / "hurdat2.txt"
-    parsed_hurdat2_csv = DATA_DIR / "parsed_hurdat2.csv"
-    movement_features_csv = DATA_DIR / "movement_added.csv"
+    hurdat2_path = HURDAT2_DIR / "hurdat2.txt"
+    parsed_hurdat2_csv = HURDAT2_DIR / "parsed_hurdat2.csv"
+    movement_features_csv = HURDAT2_DIR / "movement_added.csv"
 
     hurdat2_df = load_or_build(
         parsed_hurdat2_csv,
