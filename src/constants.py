@@ -22,4 +22,6 @@ ATLANTIC_AREA = [
     ATLANTIC_EAST
 ]
 
+DEFAULT_ERA5_VARIABLES = ["sst", "msl", "u10", "v10"]
+
 ERA5_VARIABLES = {}
